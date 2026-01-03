@@ -1,0 +1,10 @@
+# Python
+.venv/          # Virtual environment
+__pycache__/    # Compiled Python files
+*.pyc           # Compiled Python files
+
+# Env variables
+.env            # Where you store secretes and config
+
+# Logs
+*.log           # Runtime logs
