@@ -8,3 +8,7 @@ __pycache__/    # Compiled Python files
 
 # Logs
 *.log           # Runtime logs
+
+# OS / Editor
+.DS_Store      # macOS specific file
+.vscode/       # VSCode settings
