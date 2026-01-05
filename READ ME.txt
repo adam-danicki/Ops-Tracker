@@ -1,0 +1,9 @@
+How to start server:
+ - uvicorn app.main:app --reload
+
+To inspect DB in docker:
+ - docker exec -it ops_tracker_db psql -U ops -d ops_tracker
+Then inside psql:
+ - \dt          = list tables
+ - \d projects  = describe a table
+ - \q quit      = quit

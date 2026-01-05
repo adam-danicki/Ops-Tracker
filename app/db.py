@@ -1,18 +1,19 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from app.config import DATABASE_URL
+# Backbone of database connection/session management
 
 # Create one engine for the entire application
 engine = create_engine(
     DATABASE_URL, 
-    pool_pre_ping=True,   
+    pool_pre_ping=True,   # Check if connections are alive
 )
 
 # Session factory
 SessionLocal = sessionmaker(
     bind=engine,
-    autoflush=False,
-    autocommit=False,
+    autoflush=False,      # SQLAlchemy won't send pending changes to DB automatically
+    autocommit=False,     # SQLAlchemy won't auto commit after every statement
 )
 
 # Base class for models(tables)
