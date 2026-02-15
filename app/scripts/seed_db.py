@@ -122,7 +122,7 @@ def main():
             clear_first=args.clear,
         )
 
-    print("✅ Seed complete")
+    print("Seed complete")
 
 
 if __name__ == "__main__":

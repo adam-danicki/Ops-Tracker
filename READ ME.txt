@@ -6,6 +6,7 @@ To open docs:
  - http://localhost:8000/docs
 
 To run seeded file to fill backend database:
+ - docker compose up -d --build
  - docker compose exec api python scripts/seed_db.py --clear --projects 2 --subjects 15 --lesions 3 --measurements 4
 
 To inspect DB in docker:
