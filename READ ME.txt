@@ -1,5 +1,9 @@
-How to start server:
- - uvicorn app.main:app --reload
+How to start the app:
+ - docker compose up
+ - docker compose up --build (if not built before)
+
+To open docs:
+ - http://localhost:8000/docs
 
 To inspect DB in docker:
  - docker exec -it ops_tracker_db psql -U ops -d ops_tracker

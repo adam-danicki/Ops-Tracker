@@ -35,3 +35,42 @@ def list_measurements(lesion_id: int, db: Session = Depends(get_db)):
 
     stmt = select(LesionMeasurement).where(LesionMeasurement.lesion_id == lesion_id).order_by(LesionMeasurement.measured_at.asc())
     return db.execute(stmt).scalars().all()
+
+# Retrieve a single measurement by ID. Returns 404 if not found.
+@router.get("/measurements/{measurement_id}", response_model=LesionMeasurementRead)
+def get_measurement(measurement_id: int, db: Session = Depends(get_db)):
+    m = db.get(LesionMeasurement, measurement_id)
+    if not m:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Measurement not found")
+    return m
+
+# Update a measurement's size_mm and/or measured_at fields. Returns 404 if the measurement does not exist; 409 if updating to a lesion + timepoint that already has a measurement.
+@router.patch("/measurements/{measurement_id}", response_model=LesionMeasurementRead)
+def update_measurement(measurement_id: int, payload: LesionMeasurementCreate, db: Session = Depends(get_db)):
+    m = db.get(LesionMeasurement, measurement_id)
+    if not m:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Measurement not found")
+
+    m.size_mm = payload.size_mm
+    m.measured_at = payload.measured_at
+
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="measurement already exists for this lesion + timepoint")
+
+    db.refresh(m)
+    return m
+
+
+# Delete a measurement by ID. Returns 204 on success; 404 if not found.
+@router.delete("/measurements/{measurement_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_measurement(measurement_id: int, db: Session = Depends(get_db)):
+    m = db.get(LesionMeasurement, measurement_id)
+    if not m:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Measurement not found")
+
+    db.delete(m)
+    db.commit()
+

@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+
+import app.models  # noqa: F401
 from app.api.projects import router as projects_router
 from app.api.subjects import router as subjects_router
 from app.api.lesions import router as lesions_router
