@@ -1,14 +1,14 @@
 # Python
-.venv/          # Virtual environment
-__pycache__/    # Compiled Python files
-*.pyc           # Compiled Python files
+.venv/          
+__pycache__/    
+*.pyc           
 
 # Env variables
-.env            # Where you store secretes and config
+.env            
 
 # Logs
-*.log           # Runtime logs
+*.log           
 
 # OS / Editor
-.DS_Store      # macOS specific file
-.vscode/       # VSCode settings
+.DS_Store      
+.vscode/       

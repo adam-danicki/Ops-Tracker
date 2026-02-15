@@ -1,1 +1,1 @@
-from .models.project import Project
+# app package

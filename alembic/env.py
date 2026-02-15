@@ -12,7 +12,10 @@ sys.path.append(str(ROOT_DIR))
 from app.config import DATABASE_URL
 from app.db import Base
 
-from app.models.project import Project
+from app.models.project import Project                          # noqa: F401
+from app.models.subject import Subject                          # noqa: F401
+from app.models.lesion import Lesion                            # noqa: F401
+from app.models.lesion_measurement import LesionMeasurement     # noqa: F401
 
 config = context.config
 

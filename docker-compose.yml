@@ -10,6 +10,25 @@ services:
       - "5432:5432"
     volumes:
       - ops_tracker_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ops -d ops_tracker"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  
+  api:
+    build: .
+    container_name: ops_tracker_api
+    environment:
+      DATABASE_URL: postgresql+psycopg://ops:ops@db:5432/ops_tracker
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -lc "alembic upgrade head &&
+      uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
 volumes:
   ops_tracker_pgdata:
