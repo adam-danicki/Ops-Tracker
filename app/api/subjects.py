@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from app.db import get_db
+from app.models.lesion import Lesion
 from app.models.project import Project
 from app.models.subject import Subject
+from app.schemas.deep_read import SubjectBase
 from app.schemas.subject import SubjectCreate, SubjectRead, SubjectUpdate
 
 router = APIRouter(tags=["subjects"])
@@ -40,6 +42,21 @@ def list_subjects(project_id: int, db: Session = Depends(get_db)):
 @router.get("/subjects/{subject_id}", response_model=SubjectRead)
 def get_subject(subject_id: int, db: Session = Depends(get_db)):
     subject = db.get(Subject, subject_id)
+    if not subject:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Subject not found")
+    return subject
+
+# Retrieve a subject along with all its nested lesions and measurements. Returns 404 if not found.
+@router.get("/subjects/{subject_id}/deep", response_model=SubjectBase)
+def get_subject_deep(subject_id: int, db: Session = Depends(get_db)):
+    stmt = (
+        select(Subject)
+        .where(Subject.id == subject_id)
+        .options(
+            selectinload(Subject.lesions).selectinload(Lesion.measurements)
+        )
+    )
+    subject = db.execute(stmt).scalar_one_or_none()
     if not subject:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Subject not found")
     return subject

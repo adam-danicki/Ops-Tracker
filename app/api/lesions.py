@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from app.db import get_db
+from app.models.lesion_measurement import LesionMeasurement
 from app.models.subject import Subject
 from app.models.lesion import Lesion
+from app.schemas.analytics import LesionChange
+from app.schemas.deep_read import LesionBase
 from app.schemas.lesion import LesionCreate, LesionRead, LesionUpdate
 
 router = APIRouter(tags=["lesions"])
@@ -68,3 +71,52 @@ def delete_lesion(lesion_id: int, db: Session = Depends(get_db)):
     db.delete(lesion)
     db.commit()
     return None
+
+# Retrieve a lesion along with all its nested measurements. Returns 404 if not found.
+@router.get("/lesions/{lesion_id}/deep", response_model=LesionBase)
+def get_lesion_deep(lesion_id: int, db: Session = Depends(get_db)):
+    stmt = (
+        select(Lesion)
+        .where(Lesion.id == lesion_id)
+        .options(selectinload(Lesion.measurements))
+    )
+    lesion = db.execute(stmt).scalar_one_or_none()
+    if not lesion:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lesion not found")
+    return lesion
+
+# Retrieve analytics on lesion change over time, based on longest diameter measurements. Returns 404 if the lesion does not exist.
+@router.get("/lesions/{lesion_id}/analytics/change", response_model=LesionChange)
+def lesion_change(lesion_id: int, db: Session = Depends(get_db)):
+    if not db.get(Lesion, lesion_id):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lesion not found")
+
+    rows = db.execute(
+        select(LesionMeasurement)
+        .where(LesionMeasurement.lesion_id == lesion_id)
+        .order_by(LesionMeasurement.measured_at.asc())
+    ).scalars().all()
+
+    if not rows:
+        return LesionChange(
+            lesion_id=lesion_id,
+            baseline_measured_at=None, baseline_longest_mm=None,
+            latest_measured_at=None, latest_longest_mm=None,
+            pct_change_longest=None,
+        )
+
+    baseline = rows[0]
+    latest = rows[-1]
+
+    pct = None
+    if baseline.longest_diameter_mm and baseline.longest_diameter_mm > 0:
+        pct = ((latest.longest_diameter_mm - baseline.longest_diameter_mm) / baseline.longest_diameter_mm) * 100.0
+
+    return LesionChange(
+        lesion_id=lesion_id,
+        baseline_measured_at=baseline.measured_at,
+        baseline_longest_mm=baseline.longest_diameter_mm,
+        latest_measured_at=latest.measured_at,
+        latest_longest_mm=latest.longest_diameter_mm,
+        pct_change_longest=pct,
+    )
