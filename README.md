@@ -1,21 +1,3 @@
-How to start the app:
- - docker compose up
- - docker compose up --build (if not built before)
-
-To open docs:
- - http://localhost:8000/docs
-
-To run seeded file to fill backend database:
- - docker compose up -d --build
- - docker compose exec api python scripts/seed_db.py --clear --projects 2 --subjects 15 --lesions 3 --measurements 4
-
-To inspect DB in docker:
- - docker exec -it ops_tracker_db psql -U ops -d ops_tracker
-Then inside psql:
- - \dt          = list tables
- - \d projects  = describe a table
- - \q quit      = quit
-
 # Ops-Tracker API
 
 Ops-Tracker is a FastAPI + PostgreSQL backend for organizing and tracking longitudinal lesion data in a clean hierarchy:
