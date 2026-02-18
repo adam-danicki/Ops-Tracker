@@ -29,6 +29,38 @@ It’s built to support consistent data entry (unique IDs per scope), easy query
 
 ----------------------------------------------------------------------------------------
 
+## Project Structure
+
+```text
+.
+├── app/
+│   ├── api/                     # FastAPI routers (HTTP endpoints)
+│   │   ├── projects.py          # /projects endpoints
+│   │   ├── subjects.py          # /projects/{id}/subjects + /subjects/{id}
+│   │   ├── lesions.py           # /subjects/{id}/lesions + /lesions/{id}
+│   │   └── lesion_measurements.py # /lesions/{id}/measurements
+│   ├── models/                  # SQLAlchemy ORM models (DB tables + relationships)
+│   │   ├── project.py           # Project model (1→many Subjects)
+│   │   ├── subject.py           # Subject model (many→1 Project, 1→many Lesions)
+│   │   ├── lesion.py            # Lesion model (many→1 Subject, 1→many Measurements)
+│   │   └── lesion_measurement.py# Measurement model (many→1 Lesion)
+│   ├── schemas/                 # Pydantic request/response DTOs (API validation + typing)
+│   ├── scripts/                 # One-off utilities (dev tooling)
+│   │   └── seed_db.py           # Seeds realistic demo data into the DB
+│   ├── db.py                    # DB engine/session + FastAPI get_db dependency
+│   ├── config.py                # Centralized config (e.g., env vars)
+│   └── main.py                  # FastAPI app entrypoint (includes routers)
+├── alembic/                     # Alembic migrations (schema versioning)
+├── alembic.ini                  # Alembic configuration
+├── docker-compose.yml           # Local stack: API + Postgres
+├── Dockerfile                   # API container build definition
+├── requirements.txt             # Python dependencies
+├── .env                         # Local environment variables (DO NOT commit)
+├── .gitignore                   # Git ignore rules
+└── README.md                    # Project documentation
+
+----------------------------------------------------------------------------------------
+
 ## Data model
 
 ### Entities
