@@ -1,10 +1,7 @@
 # Python
 .venv/          
 __pycache__/    
-*.pyc           
-
-# Env variables
-.env            
+*.pyc                    
 
 # Logs
 *.log           
