@@ -6,7 +6,7 @@ Ops-Tracker is a FastAPI + PostgreSQL backend for organizing and tracking longit
 
 It’s built to support consistent data entry (unique IDs per scope), easy querying through REST endpoints, and fast local development through Docker + a seeding script.
 
-----------------------------------------------------------------------------------------
+
 
 ## What this project does
 
@@ -17,7 +17,7 @@ It’s built to support consistent data entry (unique IDs per scope), easy query
 - Enforces relational integrity and prevents common duplicates via constraints
 - Provides OpenAPI docs (Swagger UI) for testing endpoints quickly
 
-----------------------------------------------------------------------------------------
+
 
 ## Tech stack
 
@@ -27,7 +27,7 @@ It’s built to support consistent data entry (unique IDs per scope), easy query
 - PostgreSQL
 - Docker / Docker Compose
 
-----------------------------------------------------------------------------------------
+
 
 ## Project Structure
 
@@ -60,7 +60,7 @@ It’s built to support consistent data entry (unique IDs per scope), easy query
 └── README.md                        # Project documentation
 ```
 
-----------------------------------------------------------------------------------------
+
 
 ## Data model
 
@@ -93,7 +93,7 @@ It’s built to support consistent data entry (unique IDs per scope), easy query
 - Validates numeric ranges (e.g., non-negative measurements, confidence in `[0, 1]`)
 - Cascading deletes: removing a parent removes its children (Project → Subject → Lesion → Measurement)
 
-----------------------------------------------------------------------------------------
+
 
 ## API Overview
 
@@ -128,7 +128,7 @@ Core endpoints you can use right away:
 - `POST /lesions/{lesion_id}/measurements` create measurement for a lesion
 - `GET /lesions/{lesion_id}/measurements` list measurements for a lesion
 
-----------------------------------------------------------------------------------------
+
 
 ## Running with Docker
 
