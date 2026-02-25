@@ -58,6 +58,7 @@ It’s built to support consistent data entry (unique IDs per scope), easy query
 ├── .env                             # Local environment variables (DO NOT commit)
 ├── .gitignore                       # Git ignore rules
 └── README.md                        # Project documentation
+```
 
 ----------------------------------------------------------------------------------------
 
