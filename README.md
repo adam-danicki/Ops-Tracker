@@ -1,4 +1,4 @@
-# Ops-Tracker API
+# Longitudinal Lesion Tracking REST API
 
 Ops-Tracker is a FastAPI + PostgreSQL backend for organizing and tracking longitudinal lesion data in a clean hierarchy:
 
